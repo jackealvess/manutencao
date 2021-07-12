@@ -55,7 +55,7 @@ def transform_day(x, periodo):
 st.write("""# Probabilidade do equipamento falhar - Manutenção""")
 
 #leitura do arquivo
-df=pd.read_excel('manutencaoexcel.xlsx')
+df=pd.read_excel('dados.xlsx')
 #considerando apenas manutenções corretivas
 df = df[df['Classe']=='CORRETIVA']
 #considerar cada manutenção como uma "falha"
