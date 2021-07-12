@@ -1,12 +1,12 @@
+#PROJETO PARA ANALISAR SE ESTA ACIMA OU ABAIXO DA MÉDIA A PROBABILIDADE DO EQUIPAMENTO FALHAR
 #importando as bibliotecas
 import streamlit as st #pacote para fazer o app
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
-#from pmdarima.arima import auto_arima
 from statsmodels.tsa.arima.model import ARIMA
-from fbprophet import Prophet
+#from fbprophet import Prophet
 
 #função para calcular métricas
 #entradas: a série temporal original (y)
@@ -52,7 +52,7 @@ def transform_day(x, periodo):
 #//--------------------------------------------------------------------------------------------------------------------------//
 
 #o comando st.write escreve uma mensagem no app
-st.write("""# Séries Temporais Para Previsão de Falhas""")
+st.write("""# Probabilidade do equipamento falhar - Manutenção""")
 
 #leitura do arquivo
 df=pd.read_excel('manutencaoexcel.xlsx')
@@ -187,7 +187,7 @@ if escolha_modelo == 'Prophet':
 
 st.write("""## Avaliação considerando treino e teste""")
 
-porcentagem = st.selectbox('Escolha o percentual da base de teste:', ['0.1','0.25','0.5','0.75'])
+porcentagem = st.selectbox('Escolha o percentual da base de teste:', ['0.05','0.1','0.25','0.5','0.75'])
 
 #st.write(len(ts))
 #st.write(len(ts_prophet))
@@ -196,13 +196,19 @@ numero_teste = int(len(ts)*float(porcentagem))
 treino_arima = ts[:-numero_teste]
 teste_arima = ts[-numero_teste:]
 
-arima_model = auto_arima(treino_arima,error_Action='warn',supress_warnings=True,stepwise=True)
+#arima_model = auto_arima(treino_arima,error_Action='warn',supress_warnings=True,stepwise=True)
 
-forecast_arima = arima_model.predict(n_periods=numero_teste)
+#forecast_arima = arima_model.predict(n_periods=numero_teste)
 
-metrics = calc_metrics(teste_arima['Falhas'].values,forecast_arima)
+model = ARIMA(treino_arima,order=(5,0,5))
+results_AR = model.fit()
 
-teste_arima['Falhas'] = forecast_arima
+#metrics = calc_metrics(teste_arima['Falhas'].values,forecast_arima)
+#teste_arima['Falhas'] = forecast_arima
+
+metrics = calc_metrics(teste_arima['Falhas'].values,results_AR.forecast(steps=numero_teste).values)
+
+teste_arima['Falhas'] = results_AR.forecast(steps=numero_teste).values
 
 ts_prophet = ts_prophet.rename(columns={'Falhas':'y','Data':'ds'})
 
@@ -212,13 +218,15 @@ teste_prophet = ts_prophet[-numero_teste:]
 prophet_model = Prophet()
 prophet_model.fit(treino_prophet)
 forecast_prophet = prophet_model.predict(teste_prophet)
-metrics = calc_metrics(teste_arima['Falhas'].values,forecast_prophet['yhat'].values)
+metrics = calc_metrics(teste_prophet['y'].values,forecast_prophet['yhat'].values)
 teste_prophet['y'] = forecast_prophet['yhat']
+
+teste_prophet['y'] = np.mean(treino_prophet['y'])
+metrics = calc_metrics(teste_prophet['y'].values,forecast_prophet['yhat'].values)
 
 plt.clf()
 plt.plot(ts,label='Dados')
 plt.plot(teste_arima,label='Arima')
-st.write(teste_prophet)
 plt.plot(forecast_prophet['ds'],forecast_prophet['yhat'],label='Prophet')
 plt.legend()
 plt.ylabel('Falhas')
@@ -234,12 +242,18 @@ artigo = {"Mês":"o","Semana":"a","Dia":"o"}
 
 mes = st.selectbox('Escolha {} {}:'.format(artigo[periodo],periodo.lower()), [i for i in range(1,13)])
 
-previsao = results_AR.forecast(steps=mes).values[-1]
+intervalo = st.selectbox('Escolha o intervalo de confiança (%):', [0.95,0.9,0.85,0.8])
+
+model = ARIMA(ts,order=(5,0,5))
+results_AR = model.fit()
+previsao = results_AR.forecast(steps=mes)
+previsao = previsao.values[-1]
+intervalo = results_AR.conf_int((1-intervalo)/100)
 
 st.write(previsao)
 
 avaliacao = "acima" if previsao >= ts.mean().values else "abaixo"
-
 st.write("""### O número de falhas d{} {} {} está {} da média""".format(artigo[periodo],periodo.lower(),mes,avaliacao))
+
 
 
