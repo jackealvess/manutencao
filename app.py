@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.arima.model import ARIMA
-#from fbprophet import Prophet
+from fbprophet import Prophet
 
 #função para calcular métricas
 #entradas: a série temporal original (y)
