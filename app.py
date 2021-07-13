@@ -105,7 +105,10 @@ st.write('### A série é {}'.format(resultado))
 
 #//--------------------------------------------------------------------------------------------------------------------------//
 
-st.write("""## Modelos""")
+st.write("""#### Modelos""")
+st.write("""#### Naive - Descrever""")
+st.write("""#### Arima - Descrever""")
+st.write("""#### Prophet - Descrever""")
 
 escolha_modelo = st.selectbox("""# Escolha o modelo:""", ['Naive','ARIMA','Prophet'])
 ts = ts.set_index(['Data'])
