@@ -191,8 +191,9 @@ if escolha_modelo == 'Prophet':
 
 st.write("""## Avaliação considerando treino e teste""")
 st.write("""####  simulando previsões reais que o modelo realizará""")
-porcentagem = st.selectbox('Escolha o percentual da base de teste: 10, 20 ou 30 porcento', [''0.1','0.2','0.3'])
-
+porcentagem = st.selectbox('Escolha o percentual da base de teste: 10, 20 ou 30 porcento', ['0.1','0.2','0.3'])
+                                                                                          
+                                                                                            
 #st.write(len(ts))
 #st.write(len(ts_prophet))
 numero_teste = int(len(ts)*float(porcentagem))
