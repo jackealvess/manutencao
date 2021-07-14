@@ -51,7 +51,7 @@ def transform_day(x, periodo):
 #//--------------------------------------------------------------------------------------------------------------------------//
 
 #o comando st.write escreve uma mensagem no app
-st.write("""# Séries Temporais Para Previsão de Falhas""")
+st.write("""# Séries Temporais Para Previsão de Falhas v1""")
 
 #leitura do arquivo
 df=pd.read_excel('manutencaoexcel.xlsx')
