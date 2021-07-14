@@ -54,7 +54,7 @@ def transform_day(x, periodo):
 st.write("""# Séries Temporais Para Previsão de Falhas""")
 
 #leitura do arquivo
-df=pd.read_excel('dados.xlsx')
+df=pd.read_excel('manutencaoexcel.xlsx')
 #considerando apenas manutenções corretivas
 df = df[df['Classe']=='CORRETIVA']
 #considerar cada manutenção como uma "falha"
@@ -78,6 +78,7 @@ st.write("""## Falhas do {} por {}""".format(equipamento,periodo.lower()))
 #aplica a transformação nas datas para agrupar por período
 df['Data'] = df['Data'].apply(lambda x: transform_day(x,periodo))
 df['Data'] = df['Data'].astype("datetime64")
+
 #agrupamento por período e salvando o dataset em ts 
 ts = df[df['Equipamento'] == equipamento].groupby('Data').count().reset_index().drop(["Equipamento"],axis=1)
 ts = ts.rename(columns={'Classe':'Falhas'})
@@ -87,9 +88,11 @@ ts_prophet = ts.copy()
 st.line_chart(ts.rename(columns={'Data':'index'}).set_index('index'))
 #cálculo da média
 media = ts.mean()
+
+
 #imprime o número mínimo de falha e média
-st.write("""### Mínimo de falhas por {}: {}""".format(periodo.lower(),ts.min()['Falhas']))
-st.write("""### Média de falhas por {}: {}""".format(periodo.lower(),ts.mean()['Falhas']))
+st.write("""### Mínimo de de manutenções corretivas por {}: {}""".format(periodo.lower(),ts.min()['Falhas']))
+st.write("""### Média de manutenções corretivas por {}: {}""".format(periodo.lower(),ts.mean()['Falhas']))
 
 #//--------------------------------------------------------------------------------------------------------------------------//
 
@@ -176,17 +179,19 @@ if escolha_modelo == 'Prophet':
   #st.write("""### MAE = {}""".format(metrics[2]))
 
   plt.clf()
-  plt.plot(predictions,label='Prophet')
-  plt.plot(ts,label='Dados')
+  plt.plot(predictions,label='Prophet - Valor da previsao')
+  plt.plot(ts,label='Dados de teste')
+  plt.figure(figsize=(9, 1))
   plt.legend()
   plt.ylabel('Falhas')
   plt.xlabel('Data')
   plt.legend()
+  plt.suptitle('Comparando o resultado')
   st.pyplot(plt)
 
 st.write("""## Avaliação considerando treino e teste""")
-
-porcentagem = st.selectbox('Escolha o percentual da base de teste:', ['0.05','0.1','0.25','0.5','0.75'])
+st.write("""####  simulando previsões reais que o modelo realizará""")
+porcentagem = st.selectbox('Escolha o percentual da base de teste: 10%, 20% ou 30%', [''0.1','0.2','0.3'])
 
 #st.write(len(ts))
 #st.write(len(ts_prophet))
@@ -241,13 +246,13 @@ artigo = {"Mês":"o","Semana":"a","Dia":"o"}
 
 mes = st.selectbox('Escolha {} {}:'.format(artigo[periodo],periodo.lower()), [i for i in range(1,13)])
 
-intervalo = st.selectbox('Escolha o intervalo de confiança (%):', [0.95,0.9,0.85,0.8])
+#intervalo = st.selectbox('Escolha o intervalo de confiança (%):', [0.95,0.9,0.85,0.8])
 
-model = ARIMA(ts,order=(5,0,5))
-results_AR = model.fit()
-previsao = results_AR.forecast(steps=mes)
-previsao = previsao.values[-1]
-intervalo = results_AR.conf_int((1-intervalo)/100)
+#model = ARIMA(ts,order=(5,0,5))
+#results_AR = model.fit()
+#previsao = results_AR.forecast(steps=mes)
+#previsao = previsao.values[-1]
+#intervalo = results_AR.conf_int((1-intervalo)/100)
 
 st.write(previsao)
 
