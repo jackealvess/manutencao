@@ -1,4 +1,3 @@
-#PROJETO PARA ANALISAR SE ESTA ACIMA OU ABAIXO DA MÉDIA A PROBABILIDADE DO EQUIPAMENTO FALHAR
 #importando as bibliotecas
 import streamlit as st #pacote para fazer o app
 import numpy as np
@@ -6,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.arima.model import ARIMA
-from fbprophet import Prophet
+from prophet import Prophet
 
 #função para calcular métricas
 #entradas: a série temporal original (y)
@@ -52,10 +51,10 @@ def transform_day(x, periodo):
 #//--------------------------------------------------------------------------------------------------------------------------//
 
 #o comando st.write escreve uma mensagem no app
-st.write("""# Probabilidade do equipamento falhar - Manutenção""")
+st.write("""# Séries Temporais Para Previsão de Falhas""")
 
 #leitura do arquivo
-df=pd.read_excel('dados.xlsx')
+df=pd.read_excel('manutencaoexcel.xlsx')
 #considerando apenas manutenções corretivas
 df = df[df['Classe']=='CORRETIVA']
 #considerar cada manutenção como uma "falha"
@@ -105,10 +104,7 @@ st.write('### A série é {}'.format(resultado))
 
 #//--------------------------------------------------------------------------------------------------------------------------//
 
-st.write("""#### Modelos""")
-st.write("""#### Naive - Descrever""")
-st.write("""#### Arima - Descrever""")
-st.write("""#### Prophet - Descrever""")
+st.write("""## Modelos""")
 
 escolha_modelo = st.selectbox("""# Escolha o modelo:""", ['Naive','ARIMA','Prophet'])
 ts = ts.set_index(['Data'])
