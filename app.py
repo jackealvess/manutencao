@@ -51,7 +51,7 @@ def transform_day(x, periodo):
 #//--------------------------------------------------------------------------------------------------------------------------//
 
 #o comando st.write escreve uma mensagem no app
-st.write("""# Séries Temporais Para Previsão de Falhas v1""")
+st.write("""# Séries Temporais Para Previsão de Falhas - v1""")
 
 #leitura do arquivo
 df=pd.read_excel('manutencaoexcel.xlsx')
@@ -181,8 +181,7 @@ if escolha_modelo == 'Prophet':
   plt.clf()
   plt.plot(predictions,label='Prophet - Valor da previsao')
   plt.plot(ts,label='Dados de teste')
-  plt.figure(figsize=(9, 1))
-  plt.legend()
+   plt.legend()
   plt.ylabel('Falhas')
   plt.xlabel('Data')
   plt.legend()
@@ -192,8 +191,7 @@ if escolha_modelo == 'Prophet':
 st.write("""## Avaliação considerando treino e teste""")
 st.write("""####  simulando previsões reais que o modelo realizará""")
 porcentagem = st.selectbox('Escolha o percentual da base de teste: 10, 20 ou 30 porcento', ['0.1','0.2','0.3'])
-                                                                                          
-                                                                                            
+
 #st.write(len(ts))
 #st.write(len(ts_prophet))
 numero_teste = int(len(ts)*float(porcentagem))
@@ -249,11 +247,11 @@ mes = st.selectbox('Escolha {} {}:'.format(artigo[periodo],periodo.lower()), [i 
 
 #intervalo = st.selectbox('Escolha o intervalo de confiança (%):', [0.95,0.9,0.85,0.8])
 
-#model = ARIMA(ts,order=(5,0,5))
-#results_AR = model.fit()
-#previsao = results_AR.forecast(steps=mes)
-#previsao = previsao.values[-1]
-#intervalo = results_AR.conf_int((1-intervalo)/100)
+model = ARIMA(ts,order=(5,0,5))
+results_AR = model.fit()
+previsao = results_AR.forecast(steps=mes)
+previsao = previsao.values[-1]
+intervalo = results_AR.conf_int((1-intervalo)/100)
 
 st.write(previsao)
 
