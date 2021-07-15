@@ -245,7 +245,7 @@ artigo = {"Mês":"o","Semana":"a","Dia":"o"}
 
 mes = st.selectbox('Escolha {} {}:'.format(artigo[periodo],periodo.lower()), [i for i in range(1,13)])
 
-#intervalo = st.selectbox('Escolha o intervalo de confiança (%):', [0.95,0.9,0.85,0.8])
+intervalo = st.selectbox('Escolha o intervalo de confiança (%):', [0.95,0.9,0.85,0.8])
 
 model = ARIMA(ts,order=(5,0,5))
 results_AR = model.fit()
