@@ -181,7 +181,7 @@ if escolha_modelo == 'Prophet':
   plt.clf()
   plt.plot(predictions,label='Prophet - Valor da previsao')
   plt.plot(ts,label='Dados de teste')
-   plt.legend()
+  plt.legend()
   plt.ylabel('Falhas')
   plt.xlabel('Data')
   plt.legend()
